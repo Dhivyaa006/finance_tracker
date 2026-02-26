@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personal Finance Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            text-align: center;
+        }
+
+        .container {
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        input, select, button {
+            width: 90%;
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .summary {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .expense-list {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .warning {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Personal Finance Tracker</h2>
+
+    <input type="number" id="income" placeholder="Enter Monthly Income">
+    <input type="number" id="budget" placeholder="Set Monthly Budget">
+    <button onclick="saveIncome()">Save Income & Budget</button>
+
+    <hr>
+
+    <input type="text" id="desc" placeholder="Expense Description">
+    <input type="number" id="amount" placeholder="Expense Amount">
+    
+    <select id="category">
+        <option>Food</option>
+        <option>Travel</option>
+        <option>Shopping</option>
+        <option>Other</option>
+    </select>
+
+    <button onclick="addExpense()">Add Expense</button>
+
+    <div class="expense-list" id="expenseList"></div>
+
+    <div class="summary">
+        <p>Total Expense: ₹ <span id="totalExpense">0</span></p>
+        <p>Remaining Balance: ₹ <span id="balance">0</span></p>
+        <p id="alertMsg" class="warning"></p>
+    </div>
+</div>
+
+<script>
+
+let totalExpense = 0;
+let income = 0;
+let budget = 0;
+
+function saveIncome() {
+    income = parseFloat(document.getElementById("income").value) || 0;
+    budget = parseFloat(document.getElementById("budget").value) || 0;
+
+    localStorage.setItem("income", income);
+    localStorage.setItem("budget", budget);
+
+    updateSummary();
+}
+
+function addExpense() {
+    let desc = document.getElementById("desc").value;
+    let amount = parseFloat(document.getElementById("amount").value);
+    let category = document.getElementById("category").value;
+
+    if (!desc || !amount) {
+        alert("Please enter valid expense details");
+        return;
+    }
+
+    totalExpense += amount;
+
+    let expenseItem = document.createElement("p");
+    expenseItem.textContent = desc + " (" + category + ") - ₹ " + amount;
+    document.getElementById("expenseList").appendChild(expenseItem);
+
+    document.getElementById("totalExpense").innerText = totalExpense;
+
+    updateSummary();
+
+    document.getElementById("desc").value = "";
+    document.getElementById("amount").value = "";
+}
+
+function updateSummary() {
+    let remaining = income - totalExpense;
+    document.getElementById("balance").innerText = remaining;
+
+    if (totalExpense > budget && budget > 0) {
+        document.getElementById("alertMsg").innerText = 
+            "⚠ Warning: Budget Limit Exceeded!";
+    } else {
+        document.getElementById("alertMsg").innerText = "";
+    }
+}
+
+</script>
+
+</body>
+</html>
